@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# 다른 에이전트 작업물 (이 사이트에 포함하지 않음)
+codex-ontology-explainer/
+public/workbench.html
+figure/build-workbench.mjs
+figure/verify-*.json
+figure/shots/
+figure/workbench-shots/
