@@ -376,9 +376,24 @@ function goTo(v) {
   if (still.matches) setView(viewTo.slice());
   run();
 }
+// 섹션마다 빛날 부품과 색 (구글 4색)
+const GLOW = {
+  stacks: { parts: ["stacks", "external"], flows: ["blue"], color: "var(--blue)" },
+  okf: { parts: ["memos", "typewriter", "gate", "stamp"], flows: ["green"], color: "var(--green)" },
+  catalog: { parts: ["catalog"], flows: ["blue", "green"], color: "var(--blue)" },
+  graph: { parts: ["board"], flows: [], color: "var(--yellow)" },
+  desk: { parts: ["mcp", "agent"], flows: ["red"], color: "var(--red)" },
+};
 function pose(id) {
   const [v, dim] = POSES[id];
   parts.forEach((p) => p.classList.toggle("dim", dim.includes(p.dataset.part)));
+  const glow = GLOW[id];
+  parts.forEach((p) => {
+    const on = !!glow && glow.parts.includes(p.dataset.part);
+    p.classList.toggle("glow", on);
+    if (on) p.style.setProperty("--gc", glow.color); else p.style.removeProperty("--gc");
+  });
+  svg.querySelectorAll("[data-flow]").forEach((f) => f.classList.toggle("glow", !!glow && glow.flows.includes(f.dataset.flow)));
   const locked = focusView && performance.now() < focusUntil;
   viewTo = (locked ? focusView : VIEWS[v]).slice();
   if (still.matches) setView(viewTo.slice());
@@ -554,6 +569,9 @@ body{font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',system-ui,sans-
 .pt.dim{opacity:.22}
 .pt:hover .iso-solid{filter:brightness(.97)}
 .pt:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.pt.glow .iso-edge{stroke:var(--gc)!important}
+.pt.glow .iso-top{fill:color-mix(in srgb,var(--gc) 22%,#1c1d20)!important}
+.flow.glow{opacity:1;stroke-width:1.6}
 .pt.lit .iso-top,.pt.sel .iso-top{fill:#24344f}
 .pt.lit .iso-edge,.pt.sel .iso-edge{stroke:var(--accent)!important}
 .h-blue .iso-top,.h-blue .iso-shade,.h-blue path{fill:#2b4a7e}
@@ -565,8 +583,6 @@ body{font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',system-ui,sans-
 .lane-label .iso-face-text{fill:#f28b82}
 .card.red path,.card.red-res path{stroke:var(--red)!important}
 .card.red-res .iso-top{fill:#5c2420}
-.db-1p .db-cap .iso-top{fill:#26334a}
-.pad-1p .iso-top{fill:#1e2228}
 .db-3p .db-cap .iso-top{fill:#3c4043}
 .pad-3p .iso-top{fill:#202124}
 .flow.lit{stroke-width:1.8;opacity:.95}
